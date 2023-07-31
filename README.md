@@ -11,7 +11,7 @@ Forex Converter is a simple web application that allows users to convert currenc
 
 ## Usage
 
-1. Visit the website: [Forex Converter](https://example.com/forex-converter)
+1. Visit the website: [Forex Converter](https://saketkaswa20.github.io/Forex_Converter_WebApp/)
 2. Select the input currency from the dropdown menu.
 3. Select the output currency from the dropdown menu.
 4. Enter the amount you want to convert in the "Amount" input field.
