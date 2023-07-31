@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forex Converter</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-semibold mb-4">Forex Converter</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="inputCurrency" class="block mb-2">Input Currency</label>
+        <div class="relative">
+          <select id="inputCurrency" class="w-full p-2 border rounded-md bg-gray-800 appearance-none">
+            <!-- Add currency options here -->
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label for="outputCurrency" class="block mb-2">Output Currency</label>
+        <div class="relative">
+          <select id="outputCurrency" class="w-full p-2 border rounded-md bg-gray-800 appearance-none">
+            <!-- Add currency options here -->
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <label for="amount" class="block mb-2">Amount</label>
+      <input type="number" id="amount" class="w-full p-2 border rounded-md bg-gray-800">
+    </div>
+    <div class="mt-4">
+      <button id="convertBtn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md">
+        Convert
+      </button>
+    </div>
+    <div id="result" class="mt-4 hidden">
+      <p class="text-xl font-semibold">Result:</p>
+      <p id="outputAmount" class="text-2xl font-bold"></p>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="text-center text-sm mt-8">
+    <p>&copy; 2023 Saket Kaswa. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // A fixed list of currency symbols (replace with your preferred symbols)
+    const currencySymbols = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      JPY: '¥',
+      AUD: 'A$',
+      CAD: 'C$',
+      INR: '₹',
+    };
+
+    // Fetch the exchange rates from a public API (replace with your preferred API)
+    async function getExchangeRates() {
+      const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      const data = await response.json();
+      return data.rates;
+    }
+
+    // Function to convert the input amount to the output currency
+    function convertCurrency(rates, inputCurrency, outputCurrency, amount) {
+      const inputRate = rates[inputCurrency];
+      const outputRate = rates[outputCurrency];
+      return (amount / inputRate) * outputRate;
+    }
+
+    // Populate the currency options in the select dropdowns
+    function populateCurrencies(currencies) {
+      const inputCurrencySelect = document.getElementById('inputCurrency');
+      const outputCurrencySelect = document.getElementById('outputCurrency');
+
+      for (const currency in currencies) {
+        const option = document.createElement('option');
+        option.value = currency;
+        option.textContent = `${currency} ${currencySymbols[currency] || ''}`;
+        inputCurrencySelect.appendChild(option);
+        outputCurrencySelect.appendChild(option.cloneNode(true));
+      }
+    }
+
+    // Main function
+    async function startApp() {
+      const rates = await getExchangeRates();
+      populateCurrencies(rates);
+
+      const convertBtn = document.getElementById('convertBtn');
+      const resultDiv = document.getElementById('result');
+      const outputAmount = document.getElementById('outputAmount');
+
+      convertBtn.addEventListener('click', () => {
+        const inputCurrency = document.getElementById('inputCurrency').value;
+        const outputCurrency = document.getElementById('outputCurrency').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        if (!isNaN(amount)) {
+          const result = convertCurrency(rates, inputCurrency, outputCurrency, amount);
+          const outputSymbol = currencySymbols[outputCurrency] || '';
+          outputAmount.textContent = `${outputSymbol} ${result.toFixed(2)}`;
+          resultDiv.classList.remove('hidden');
+        } else {
+          alert('Please enter a valid amount.');
+        }
+      });
+    }
+
+    // Start the app
+    startApp();
+  </script>
+</body>
+
+</html>
